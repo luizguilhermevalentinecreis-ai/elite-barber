@@ -886,6 +886,13 @@
             font-family: 'Playfair Display', serif;
         }
 
+        .summary-details {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
         /* Success Modal */
         .success-modal {
             position: fixed;
@@ -1033,7 +1040,7 @@
             50% { transform: scale(1.2); }
         }
 
-        /* Responsive */
+        /* ============ RESPONSIVO MOBILE ============ */
         @media (max-width: 1024px) {
             .booking-wrapper {
                 grid-template-columns: 1fr;
@@ -1058,41 +1065,108 @@
         }
 
         @media (max-width: 768px) {
+            /* Aumentar espaçamento em mobile */
+            nav {
+                padding: 1.25rem 4%;
+            }
+
             .booking-hero {
-                padding: 10rem 5% 4rem;
+                padding: 10rem 4% 4rem;
             }
 
             .hero-content h1 {
                 font-size: 2.5rem;
             }
 
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .steps-container {
+                padding: 0 4%;
+                margin-bottom: 4rem;
+            }
+
             .steps {
                 flex-wrap: wrap;
+                gap: 2rem;
             }
 
             .step {
-                flex-basis: 50%;
-                margin-bottom: 2rem;
+                flex-basis: calc(50% - 1rem);
+                margin-bottom: 0;
+            }
+
+            .step-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .booking-container {
+                padding: 0 4% 6rem;
             }
 
             .form-container {
                 padding: 2.5rem 2rem;
+                border-radius: 25px;
+            }
+
+            .step-title {
+                font-size: 1.75rem;
             }
 
             .services-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .service-option {
+                padding: 2rem 1.75rem;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            /* Aumentar área de toque em mobile */
+            .form-group input,
+            .form-group textarea {
+                padding: 1.35rem 1.25rem;
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 1.35rem 2rem;
+                font-size: 1rem;
             }
 
             .form-actions {
                 flex-direction: column-reverse;
+                gap: 1.25rem;
             }
 
             .time-slots {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem;
+            }
+
+            .time-slot {
+                padding: 1.35rem 1rem;
+            }
+
+            .calendar {
+                padding: 1.75rem;
+            }
+
+            .calendar-day {
+                padding: 0.85rem;
+                font-size: 1rem;
+            }
+
+            .summary-card {
+                padding: 2.5rem 2rem;
             }
 
             .nav-back span {
@@ -1101,7 +1175,61 @@
 
             .success-content {
                 padding: 3rem 2rem;
+                margin: 0 1.5rem;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 3rem;
+            }
+
+            .success-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .booking-hero {
+                padding: 9rem 3% 3rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .steps {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .step {
+                flex-basis: 100%;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .time-slots {
+                grid-template-columns: 1fr;
+            }
+
+            .success-content {
+                padding: 2.5rem 1.5rem;
                 margin: 0 1rem;
+            }
+        }
+
+        /* Acessibilidade Touch */
+        @media (hover: none) and (pointer: coarse) {
+            .service-option,
+            .calendar-day,
+            .time-slot,
+            .btn,
+            .form-group input,
+            .form-group textarea {
+                min-height: 48px;
             }
         }
     </style>
@@ -1408,6 +1536,9 @@
         const EMAILJS_PUBLIC_KEY = '_6rQwnRfgTA4yXMlh';
         const EMAILJS_SERVICE_ID = 'service_2wmnn1m';
         const EMAILJS_TEMPLATE_ID = 'template_oj8ynif';
+
+        // API Server URL
+        const API_URL = 'https://elite-barber.onrender.com/api/agendamentos';
 
         emailjs.init(EMAILJS_PUBLIC_KEY);
 
@@ -1732,21 +1863,64 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
             
             try {
+                console.log('📤 Enviando agendamento para o servidor...');
+                
+                // Send to Server
+                await saveBooking();
+                
                 // Send Email
                 await sendConfirmationEmail();
-                
-                // Save to Server/LocalStorage
-                await saveBooking();
                 
                 // Show Success
                 showSuccess();
             } catch (error) {
-                console.error('Erro:', error);
+                console.error('❌ Erro:', error);
                 alert('Erro ao processar agendamento. Tente novamente.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmar Agendamento';
             }
         });
+
+        async function saveBooking() {
+            const booking = {
+                nome: bookingState.name,
+                telefone: bookingState.phone,
+                email: bookingState.email,
+                servico: bookingState.service,
+                data: bookingState.date,
+                horario: bookingState.time,
+                mensagem: bookingState.notes || 'Sem observações',
+                status: 'PENDENTE'
+            };
+            
+            console.log('📋 Dados do agendamento:', booking);
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(booking)
+                });
+                
+                const data = await response.json();
+                console.log('✅ Resposta do servidor:', data);
+                
+                if (!response.ok) throw new Error(data.error || 'Erro ao salvar no servidor');
+                
+                return data;
+            } catch (error) {
+                console.warn('⚠️ Erro ao salvar no servidor, salvando localmente:', error.message);
+                
+                // Fallback: Save to localStorage
+                const bookings = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+                bookings.push({
+                    ...booking,
+                    id: Date.now(),
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('agendamentos', JSON.stringify(bookings));
+            }
+        }
 
         async function sendConfirmationEmail() {
             const orderId = `EB${Date.now().toString().slice(-8)}`;
@@ -1768,29 +1942,13 @@
                 message: bookingState.notes || 'Sem observações'
             };
             
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-        }
-
-        async function saveBooking() {
-            const booking = {
-                ...bookingState,
-                id: Date.now(),
-                status: 'CONFIRMADO',
-                createdAt: new Date().toISOString()
-            };
+            console.log('📧 Enviando email de confirmação...');
             
             try {
-                const response = await fetch('https://elite-barber.onrender.com/api/agendamentos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(booking)
-                });
-                
-                if (!response.ok) throw new Error('Servidor não respondeu');
-            } catch {
-                const bookings = JSON.parse(localStorage.getItem('agendamentos') || '[]');
-                bookings.push(booking);
-                localStorage.setItem('agendamentos', JSON.stringify(bookings));
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                console.log('✅ Email enviado com sucesso!');
+            } catch (error) {
+                console.warn('⚠️ Erro ao enviar email (não crítico):', error);
             }
         }
 
