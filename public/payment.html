@@ -11,7 +11,6 @@
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     
     <style>
-        /* [TODO O CSS ANTERIOR - NÃO MUDOU] */
         * {
             margin: 0;
             padding: 0;
@@ -929,17 +928,14 @@
 
     <script>
         // ========================================
-        // ✅ CONFIGURAÇÃO EMAILJS - IDs CORRETOS
+        // ✅ CONFIGURAÇÃO EMAILJS
         // ========================================
         const EMAILJS_PUBLIC_KEY = '_6rQwnRfgTA4yXMlh';
-        const EMAILJS_SERVICE_ID = 'service_2wmnn1m';   // ✅ ID CORRETO DO SEU GMAIL
-        const EMAILJS_TEMPLATE_ID = 'template_oj8ynif'; // ✅ ID CORRETO DO SEU TEMPLATE
+        const EMAILJS_SERVICE_ID = 'service_2wmnn1m';
+        const EMAILJS_TEMPLATE_ID = 'template_oj8ynif';
 
-        // Inicializar EmailJS
         emailjs.init(EMAILJS_PUBLIC_KEY);
         console.log('✅ EmailJS inicializado');
-        console.log('📧 Service ID:', EMAILJS_SERVICE_ID);
-        console.log('📝 Template ID:', EMAILJS_TEMPLATE_ID);
 
         // ========================================
         // CONFIGURAÇÕES
@@ -972,7 +968,7 @@
             document.getElementById('simulationWarning').classList.add('hidden');
         }
 
-        // CARREGAR DADOS DO AGENDAMENTO
+        // CARREGAR DADOS
         const bookingData = JSON.parse(localStorage.getItem('pendingBooking') || '{}');
         
         if (bookingData.servico) {
@@ -1009,7 +1005,6 @@
             startCountdown(3);
         }
 
-        // CRIAR PARTÍCULAS
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 40;
@@ -1027,7 +1022,6 @@
 
         createParticles();
 
-        // TROCA DE MÉTODO DE PAGAMENTO
         document.querySelectorAll('.payment-method').forEach(method => {
             method.addEventListener('click', () => {
                 document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
@@ -1042,7 +1036,6 @@
             });
         });
 
-        // MÁSCARAS DE INPUT
         document.getElementById('cardNumber')?.addEventListener('input', (e) => {
             let value = e.target.value.replace(/\s/g, '');
             let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
@@ -1078,7 +1071,6 @@
         formatCPF(document.getElementById('pix-cpf'));
         formatCPF(document.getElementById('boleto-cpf'));
 
-        // SUBMISSÃO DO FORMULÁRIO
         document.getElementById('payment-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1100,7 +1092,6 @@
             }, 2000);
         });
 
-        // SALVAR AGENDAMENTO
         async function saveConfirmedBooking() {
             const paymentMethod = document.querySelector('.payment-method.active').dataset.method;
             
@@ -1129,7 +1120,7 @@
                     throw new Error('Servidor não respondeu');
                 }
             } catch (error) {
-                console.log('⚠️ Salvando no localStorage (backup)');
+                console.log('⚠️ Salvando no localStorage');
                 const agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
                 agendamentos.push(confirmedBooking);
                 localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
@@ -1138,7 +1129,7 @@
         }
 
         // ========================================
-        // 📧 ENVIAR EMAIL COM EMAILJS
+        // 📧 ENVIAR EMAIL - 100% COMPATÍVEL
         // ========================================
         async function sendConfirmationEmail() {
             const paymentMethod = document.querySelector('.payment-method.active').dataset.method;
@@ -1148,26 +1139,24 @@
                 'boleto': 'Boleto Bancário'
             };
 
-            // Gerar ID único
             const orderId = `EB${Date.now().toString().slice(-8)}`;
 
-            // VARIÁVEIS PARA O TEMPLATE DO EMAILJS
+            // ✅ TODAS AS VARIÁVEIS DO TEMPLATE
             const templateParams = {
-                // Variáveis do template Order Confirmation
+                // Campos principais
                 email: bookingData.email,
                 order_id: orderId,
-                name: bookingData.servico,        // Nome do produto/serviço
-                units: '1',
+                to_name: bookingData.nome,
+                name: bookingData.servico,
                 price: bookingData.valor,
+                
+                // Objeto cost (para taxas e total)
                 cost: {
-                    shipping: 'R$ 0,00',
                     tax: 'R$ 0,00',
                     total: bookingData.valor
                 },
                 
-                // Informações extras (caso precise adicionar no template)
-                to_name: bookingData.nome,
-                service_name: bookingData.servico,
+                // Informações extras
                 booking_date: new Date(bookingData.data).toLocaleDateString('pt-BR', {
                     weekday: 'long',
                     day: '2-digit',
@@ -1180,8 +1169,7 @@
                 message: bookingData.mensagem || 'Sem observações'
             };
 
-            console.log('📧 Enviando email...');
-            console.log('Parâmetros:', templateParams);
+            console.log('📧 Enviando email com parâmetros:', templateParams);
 
             try {
                 const response = await emailjs.send(
@@ -1190,23 +1178,18 @@
                     templateParams
                 );
                 
-                console.log('✅ EMAIL ENVIADO COM SUCESSO!');
-                console.log('Response:', response);
-                
+                console.log('✅ EMAIL ENVIADO!', response);
                 document.getElementById('emailStatusMessage').textContent = '📧 Email de confirmação enviado!';
                 document.getElementById('emailStatusMessage').style.color = '#4CAF50';
                 document.getElementById('emailSuccessBadge').classList.add('show');
                 
             } catch (error) {
-                console.error('❌ ERRO AO ENVIAR EMAIL:', error);
-                console.error('Detalhes:', error.text || error.message);
-                
-                document.getElementById('emailStatusMessage').textContent = '⚠️ Email não enviado (verifique console)';
+                console.error('❌ ERRO:', error);
+                document.getElementById('emailStatusMessage').textContent = '⚠️ Email não enviado';
                 document.getElementById('emailStatusMessage').style.color = '#FF9800';
             }
         }
 
-        // MOSTRAR SUCESSO E REDIRECIONAR
         function showSuccessAndRedirect() {
             if (isSimulationMode) {
                 document.getElementById('overlayWarning').style.display = 'block';
@@ -1216,7 +1199,6 @@
             startCountdown(5);
         }
 
-        // CONTADOR REGRESSIVO
         function startCountdown(seconds) {
             let remaining = seconds;
             const countdownEl = document.getElementById('countdown');
