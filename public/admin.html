@@ -168,6 +168,34 @@
             z-index: 1;
         }
 
+        /* Back Button in Login */
+        .login-back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            text-decoration: none;
+        }
+
+        .login-back-btn:hover {
+            background: var(--gold);
+            color: var(--dark);
+            transform: translateX(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
         .login-icon {
             width: 100px;
             height: 100px;
@@ -970,6 +998,11 @@
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
+            <!-- Back Button -->
+            <a href="index.html" class="login-back-btn" title="Voltar para página principal">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+
             <div class="login-content">
                 <div class="login-icon">
                     <i class="fas fa-shield-halved"></i>
@@ -1565,4 +1598,3 @@
     </script>
 </body>
 </html>
-
