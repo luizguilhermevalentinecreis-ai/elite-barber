@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento - Elite Barber Club</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- EMAILJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     
     <style>
+        /* [TODO O CSS ANTERIOR - NÃO MUDOU] */
         * {
             margin: 0;
             padding: 0;
@@ -492,7 +496,6 @@
             cursor: not-allowed;
         }
 
-        /* SUCCESS OVERLAY */
         .success-overlay {
             display: none;
             position: fixed;
@@ -669,6 +672,22 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .email-success-badge {
+            background: rgba(76, 175, 80, 0.15);
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .email-success-badge.show {
+            display: block;
+            animation: slideUp 0.6s ease;
         }
 
         @media (max-width: 768px) {
@@ -887,15 +906,17 @@
         </div>
     </div>
 
-    <!-- SUCCESS OVERLAY -->
     <div class="success-overlay" id="successOverlay">
         <div class="success-content">
             <div class="success-checkmark"></div>
             <h2 class="success-title">Agendamento Confirmado!</h2>
             <p class="success-message">
                 Seu agendamento foi registrado com sucesso.<br>
-                Em breve você receberá um email de confirmação.
+                <span id="emailStatusMessage">📧 Email de confirmação enviado!</span>
             </p>
+            <div class="email-success-badge" id="emailSuccessBadge">
+                ✅ Confira sua caixa de entrada e spam
+            </div>
             <div class="success-warning" id="overlayWarning" style="display: none;">
                 ⚠️ Este foi um pagamento simulado<br>
                 Configure a API no painel admin para pagamentos reais
@@ -907,6 +928,22 @@
     </div>
 
     <script>
+        // ========================================
+        // ✅ CONFIGURAÇÃO EMAILJS - IDs CORRETOS
+        // ========================================
+        const EMAILJS_PUBLIC_KEY = '_6rQwnRfgTA4yXMlh';
+        const EMAILJS_SERVICE_ID = 'service_2wmnn1m';   // ✅ ID CORRETO DO SEU GMAIL
+        const EMAILJS_TEMPLATE_ID = 'template_oj8ynif'; // ✅ ID CORRETO DO SEU TEMPLATE
+
+        // Inicializar EmailJS
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        console.log('✅ EmailJS inicializado');
+        console.log('📧 Service ID:', EMAILJS_SERVICE_ID);
+        console.log('📝 Template ID:', EMAILJS_TEMPLATE_ID);
+
+        // ========================================
+        // CONFIGURAÇÕES
+        // ========================================
         const API_URL = window.location.hostname === 'localhost' ? 
                        'http://localhost:3000' : 'https://elite-barber.onrender.com';
 
@@ -935,7 +972,8 @@
             document.getElementById('simulationWarning').classList.add('hidden');
         }
 
-        const bookingData = JSON.parse(sessionStorage.getItem('bookingData') || '{}');
+        // CARREGAR DADOS DO AGENDAMENTO
+        const bookingData = JSON.parse(localStorage.getItem('pendingBooking') || '{}');
         
         if (bookingData.servico) {
             document.getElementById('serviceName').textContent = bookingData.servico;
@@ -949,7 +987,6 @@
             document.getElementById('serviceTime').textContent = bookingData.horario;
             document.getElementById('totalAmount').textContent = bookingData.valor || 'R$ 0,00';
         } else {
-            // Mostrar overlay de erro e redirecionar
             showErrorAndRedirect();
         }
 
@@ -972,6 +1009,7 @@
             startCountdown(3);
         }
 
+        // CRIAR PARTÍCULAS
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 40;
@@ -989,6 +1027,7 @@
 
         createParticles();
 
+        // TROCA DE MÉTODO DE PAGAMENTO
         document.querySelectorAll('.payment-method').forEach(method => {
             method.addEventListener('click', () => {
                 document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
@@ -1003,6 +1042,7 @@
             });
         });
 
+        // MÁSCARAS DE INPUT
         document.getElementById('cardNumber')?.addEventListener('input', (e) => {
             let value = e.target.value.replace(/\s/g, '');
             let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
@@ -1038,6 +1078,7 @@
         formatCPF(document.getElementById('pix-cpf'));
         formatCPF(document.getElementById('boleto-cpf'));
 
+        // SUBMISSÃO DO FORMULÁRIO
         document.getElementById('payment-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1054,10 +1095,12 @@
 
             setTimeout(async () => {
                 await saveConfirmedBooking();
+                await sendConfirmationEmail();
                 showSuccessAndRedirect();
             }, 2000);
         });
 
+        // SALVAR AGENDAMENTO
         async function saveConfirmedBooking() {
             const paymentMethod = document.querySelector('.payment-method.active').dataset.method;
             
@@ -1081,19 +1124,89 @@
 
                 if (response.ok) {
                     console.log('✅ Agendamento salvo no servidor');
-                    sessionStorage.removeItem('bookingData');
+                    localStorage.removeItem('pendingBooking');
                 } else {
                     throw new Error('Servidor não respondeu');
                 }
             } catch (error) {
-                console.log('⚠️ Salvando no localStorage');
+                console.log('⚠️ Salvando no localStorage (backup)');
                 const agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
                 agendamentos.push(confirmedBooking);
                 localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-                sessionStorage.removeItem('bookingData');
+                localStorage.removeItem('pendingBooking');
             }
         }
 
+        // ========================================
+        // 📧 ENVIAR EMAIL COM EMAILJS
+        // ========================================
+        async function sendConfirmationEmail() {
+            const paymentMethod = document.querySelector('.payment-method.active').dataset.method;
+            const paymentMethodNames = {
+                'pix': 'PIX',
+                'card': 'Cartão de Crédito',
+                'boleto': 'Boleto Bancário'
+            };
+
+            // Gerar ID único
+            const orderId = `EB${Date.now().toString().slice(-8)}`;
+
+            // VARIÁVEIS PARA O TEMPLATE DO EMAILJS
+            const templateParams = {
+                // Variáveis do template Order Confirmation
+                email: bookingData.email,
+                order_id: orderId,
+                name: bookingData.servico,        // Nome do produto/serviço
+                units: '1',
+                price: bookingData.valor,
+                cost: {
+                    shipping: 'R$ 0,00',
+                    tax: 'R$ 0,00',
+                    total: bookingData.valor
+                },
+                
+                // Informações extras (caso precise adicionar no template)
+                to_name: bookingData.nome,
+                service_name: bookingData.servico,
+                booking_date: new Date(bookingData.data).toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                }),
+                booking_time: bookingData.horario,
+                payment_method: paymentMethodNames[paymentMethod],
+                phone: bookingData.telefone,
+                message: bookingData.mensagem || 'Sem observações'
+            };
+
+            console.log('📧 Enviando email...');
+            console.log('Parâmetros:', templateParams);
+
+            try {
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+                
+                console.log('✅ EMAIL ENVIADO COM SUCESSO!');
+                console.log('Response:', response);
+                
+                document.getElementById('emailStatusMessage').textContent = '📧 Email de confirmação enviado!';
+                document.getElementById('emailStatusMessage').style.color = '#4CAF50';
+                document.getElementById('emailSuccessBadge').classList.add('show');
+                
+            } catch (error) {
+                console.error('❌ ERRO AO ENVIAR EMAIL:', error);
+                console.error('Detalhes:', error.text || error.message);
+                
+                document.getElementById('emailStatusMessage').textContent = '⚠️ Email não enviado (verifique console)';
+                document.getElementById('emailStatusMessage').style.color = '#FF9800';
+            }
+        }
+
+        // MOSTRAR SUCESSO E REDIRECIONAR
         function showSuccessAndRedirect() {
             if (isSimulationMode) {
                 document.getElementById('overlayWarning').style.display = 'block';
@@ -1103,6 +1216,7 @@
             startCountdown(5);
         }
 
+        // CONTADOR REGRESSIVO
         function startCountdown(seconds) {
             let remaining = seconds;
             const countdownEl = document.getElementById('countdown');
@@ -1122,5 +1236,3 @@
     </script>
 </body>
 </html>
-
-
