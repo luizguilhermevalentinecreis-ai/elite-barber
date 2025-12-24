@@ -26,6 +26,14 @@
             --gray: #808080;
             --success: #10B981;
             --error: #EF4444;
+            
+            /* Espaçamentos FLUIDOS - se adaptam à viewport */
+            --padding-page: clamp(3%, 5vw, 7%);
+            --spacing-xs: clamp(0.5rem, 1vw, 0.75rem);
+            --spacing-sm: clamp(0.75rem, 1.5vw, 1.25rem);
+            --spacing-md: clamp(1.5rem, 3vw, 2.5rem);
+            --spacing-lg: clamp(3rem, 5vw, 5rem);
+            --spacing-xl: clamp(4rem, 8vw, 8rem);
         }
 
         html {
@@ -79,8 +87,8 @@
 
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: clamp(3px, 0.4vw, 4px);
+            height: clamp(3px, 0.4vw, 4px);
             background: var(--gold);
             border-radius: 50%;
             opacity: 0.6;
@@ -109,7 +117,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 1.5rem 5%;
+            padding: clamp(1rem, 2vw, 1.5rem) var(--padding-page);
             background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(30px) saturate(180%);
             border-bottom: 1px solid rgba(255, 215, 0, 0.1);
@@ -118,7 +126,7 @@
         }
 
         nav.scrolled {
-            padding: 1rem 5%;
+            padding: clamp(0.75rem, 1.5vw, 1rem) var(--padding-page);
             background: rgba(10, 10, 10, 0.95);
             box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
         }
@@ -129,21 +137,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: clamp(1rem, 2vw, 2rem);
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: clamp(1.3rem, 3vw, 2rem);
             font-weight: 900;
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 3px;
+            letter-spacing: clamp(1px, 0.3vw, 3px);
             text-transform: uppercase;
             animation: shimmer 3s linear infinite;
             text-decoration: none;
             display: block;
+            white-space: nowrap;
         }
 
         @keyframes shimmer {
@@ -154,8 +164,8 @@
         .nav-back {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
+            gap: clamp(0.5rem, 1vw, 0.75rem);
+            padding: clamp(0.65rem, 1.2vw, 0.75rem) clamp(1.2rem, 2vw, 1.5rem);
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 50px;
@@ -163,6 +173,8 @@
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
+            font-size: clamp(0.85rem, 1.2vw, 1rem);
+            white-space: nowrap;
         }
 
         .nav-back:hover {
@@ -174,7 +186,7 @@
 
         /* Hero Section */
         .booking-hero {
-            padding: 12rem 5% 6rem;
+            padding: clamp(8rem, 15vh, 12rem) var(--padding-page) clamp(4rem, 8vh, 6rem);
             text-align: center;
             position: relative;
         }
@@ -212,15 +224,15 @@
         .hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.5rem;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 50px;
             color: var(--gold);
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 1.2vw, 0.9rem);
             font-weight: 600;
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-md);
             animation: pulse 2s ease-in-out infinite;
         }
 
@@ -236,9 +248,9 @@
         }
 
         .hero-content h1 {
-            font-size: clamp(3rem, 6vw, 5rem);
+            font-size: clamp(2.5rem, 6vw, 5rem);
             font-weight: 900;
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-sm);
             font-family: 'Playfair Display', serif;
             line-height: 1.1;
         }
@@ -253,30 +265,31 @@
         }
 
         .hero-content p {
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 1.8vw, 1.25rem);
             color: rgba(255, 255, 255, 0.7);
             line-height: 1.8;
-            margin-bottom: 3rem;
+            margin-bottom: var(--spacing-md);
         }
 
         /* Steps Indicator */
         .steps-container {
             max-width: 1200px;
-            margin: 0 auto 6rem;
-            padding: 0 5%;
+            margin: 0 auto var(--spacing-lg);
+            padding: 0 var(--padding-page);
         }
 
         .steps {
             display: flex;
             justify-content: space-between;
             position: relative;
-            margin-bottom: 4rem;
+            margin-bottom: var(--spacing-lg);
+            gap: clamp(0.5rem, 2vw, 1rem);
         }
 
         .steps::before {
             content: '';
             position: absolute;
-            top: 35px;
+            top: clamp(30px, 5vw, 35px);
             left: 0;
             width: 100%;
             height: 3px;
@@ -286,7 +299,7 @@
 
         .step-progress {
             position: absolute;
-            top: 35px;
+            top: clamp(30px, 5vw, 35px);
             left: 0;
             height: 3px;
             background: linear-gradient(90deg, var(--gold), var(--gold-light));
@@ -302,16 +315,16 @@
         }
 
         .step-circle {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 1rem;
+            width: clamp(55px, 8vw, 70px);
+            height: clamp(55px, 8vw, 70px);
+            margin: 0 auto var(--spacing-xs);
             background: rgba(255, 255, 255, 0.05);
             border: 3px solid rgba(255, 215, 0, 0.3);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: clamp(1.3rem, 2.5vw, 1.8rem);
             font-weight: 900;
             color: rgba(255, 255, 255, 0.5);
             transition: all 0.4s ease;
@@ -346,7 +359,7 @@
         }
 
         .step-label {
-            font-size: 0.95rem;
+            font-size: clamp(0.75rem, 1.2vw, 0.95rem);
             font-weight: 600;
             color: rgba(255, 255, 255, 0.5);
             transition: color 0.3s ease;
@@ -364,13 +377,13 @@
         .booking-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 5% 8rem;
+            padding: 0 var(--padding-page) var(--spacing-xl);
         }
 
         .booking-wrapper {
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 3rem;
+            grid-template-columns: 1fr minmax(0, 400px);
+            gap: var(--spacing-md);
         }
 
         /* Form Steps */
@@ -378,8 +391,8 @@
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
             backdrop-filter: blur(30px);
             border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 30px;
-            padding: 4rem;
+            border-radius: clamp(20px, 3vw, 30px);
+            padding: clamp(2.5rem, 5vw, 4rem);
             position: relative;
             overflow: hidden;
         }
@@ -422,30 +435,31 @@
         }
 
         .step-title {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 3vw, 2rem);
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-xs);
             color: var(--white);
         }
 
         .step-description {
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 3rem;
+            margin-bottom: var(--spacing-md);
             line-height: 1.6;
+            font-size: clamp(0.9rem, 1.2vw, 1rem);
         }
 
-        /* Service Selection */
+        /* Service Selection - GRID AUTO-FIT */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: clamp(1rem, 2vw, 1.5rem);
         }
 
         .service-option {
             background: rgba(255, 255, 255, 0.03);
             border: 2px solid rgba(255, 215, 0, 0.2);
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: clamp(15px, 2.5vw, 20px);
+            padding: clamp(1.5rem, 3vw, 2rem);
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -483,10 +497,10 @@
         .service-option.selected::after {
             content: '✓';
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 35px;
-            height: 35px;
+            top: clamp(0.8rem, 1.5vw, 1rem);
+            right: clamp(0.8rem, 1.5vw, 1rem);
+            width: clamp(30px, 4vw, 35px);
+            height: clamp(30px, 4vw, 35px);
             background: var(--gold);
             color: var(--dark);
             border-radius: 50%;
@@ -494,30 +508,31 @@
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
             box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
         }
 
         .service-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: clamp(2rem, 3.5vw, 2.5rem);
+            margin-bottom: var(--spacing-xs);
             display: block;
         }
 
         .service-option h3 {
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 1.8vw, 1.3rem);
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: clamp(0.4rem, 0.8vw, 0.5rem);
         }
 
         .service-option p {
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.5;
         }
 
         .service-price {
-            font-size: 1.8rem;
+            font-size: clamp(1.5rem, 2.5vw, 1.8rem);
             font-weight: 900;
             background: linear-gradient(135deg, var(--gold), var(--gold-light));
             -webkit-background-clip: text;
@@ -528,18 +543,18 @@
         /* Date & Time Selection */
         .datetime-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-md);
         }
 
         .calendar-container {
-            grid-column: span 2;
+            width: 100%;
         }
 
         .calendar {
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: clamp(15px, 2.5vw, 20px);
+            padding: clamp(1.5rem, 3vw, 2rem);
             border: 1px solid rgba(255, 215, 0, 0.2);
         }
 
@@ -547,28 +562,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-md);
+            gap: var(--spacing-xs);
         }
 
         .calendar-header h3 {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
             font-weight: 700;
         }
 
         .calendar-nav {
             display: flex;
-            gap: 1rem;
+            gap: var(--spacing-xs);
         }
 
         .calendar-nav button {
-            width: 40px;
-            height: 40px;
+            width: clamp(35px, 5vw, 40px);
+            height: clamp(35px, 5vw, 40px);
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 50%;
             color: var(--gold);
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.9rem, 1.5vw, 1rem);
         }
 
         .calendar-nav button:hover {
@@ -580,22 +600,22 @@
         .calendar-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: clamp(0.3rem, 0.8vw, 0.5rem);
+            margin-bottom: var(--spacing-xs);
         }
 
         .weekday {
             text-align: center;
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
+            font-size: clamp(0.75rem, 1.2vw, 0.85rem);
             font-weight: 600;
-            padding: 0.5rem;
+            padding: clamp(0.4rem, 0.8vw, 0.5rem);
         }
 
         .calendar-days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
+            gap: clamp(0.3rem, 0.8vw, 0.5rem);
         }
 
         .calendar-day {
@@ -605,10 +625,11 @@
             justify-content: center;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 215, 0, 0.1);
-            border-radius: 10px;
+            border-radius: clamp(8px, 1.5vw, 10px);
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
+            font-size: clamp(0.85rem, 1.3vw, 1rem);
         }
 
         .calendar-day:hover:not(.disabled):not(.other-month) {
@@ -638,23 +659,22 @@
             border-width: 2px;
         }
 
-        /* Time Slots */
+        /* Time Slots - AUTO FIT */
         .time-slots {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            grid-column: span 2;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 90px), 1fr));
+            gap: clamp(0.8rem, 1.5vw, 1rem);
         }
 
         .time-slot {
-            padding: 1.25rem;
+            padding: clamp(1rem, 2vw, 1.25rem);
             background: rgba(255, 255, 255, 0.03);
             border: 2px solid rgba(255, 215, 0, 0.2);
-            border-radius: 15px;
+            border-radius: clamp(12px, 2vw, 15px);
             text-align: center;
             cursor: pointer;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 1.5vw, 1.1rem);
             transition: all 0.3s ease;
         }
 
@@ -679,27 +699,27 @@
 
         /* Form Groups */
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-md);
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: var(--spacing-xs);
             color: var(--white);
             font-weight: 600;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 1.2vw, 1rem);
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 1.25rem;
+            padding: clamp(1rem, 2vw, 1.25rem);
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(255, 215, 0, 0.2);
-            border-radius: 15px;
+            border-radius: clamp(12px, 2vw, 15px);
             color: var(--white);
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 1.2vw, 1rem);
             transition: all 0.3s ease;
         }
 
@@ -718,26 +738,26 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: clamp(100px, 15vw, 120px);
         }
 
         .form-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+            gap: var(--spacing-sm);
         }
 
         /* Form Buttons */
         .form-actions {
             display: flex;
-            gap: 1.5rem;
-            margin-top: 3rem;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
         }
 
         .btn {
             flex: 1;
-            padding: 1.25rem 2.5rem;
-            font-size: 1.1rem;
+            padding: clamp(1rem, 2vw, 1.25rem) clamp(2rem, 3vw, 2.5rem);
+            font-size: clamp(0.95rem, 1.5vw, 1.1rem);
             font-weight: 700;
             text-decoration: none;
             border-radius: 50px;
@@ -745,13 +765,13 @@
             cursor: pointer;
             border: none;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: clamp(1px, 0.2vw, 2px);
             position: relative;
             overflow: hidden;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
+            gap: var(--spacing-xs);
         }
 
         .btn::before {
@@ -799,7 +819,7 @@
         /* Sidebar Summary */
         .booking-summary {
             position: sticky;
-            top: 120px;
+            top: clamp(100px, 15vh, 120px);
             height: fit-content;
         }
 
@@ -807,8 +827,8 @@
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
             backdrop-filter: blur(30px);
             border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 30px;
-            padding: 3rem;
+            border-radius: clamp(20px, 3vw, 30px);
+            padding: clamp(2rem, 4vw, 3rem);
             position: relative;
             overflow: hidden;
         }
@@ -824,17 +844,17 @@
         }
 
         .summary-title {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
             font-weight: 700;
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-md);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: var(--spacing-xs);
         }
 
         .summary-item {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
+            margin-bottom: var(--spacing-sm);
+            padding-bottom: var(--spacing-sm);
             border-bottom: 1px solid rgba(255, 215, 0, 0.1);
         }
 
@@ -846,16 +866,16 @@
 
         .summary-label {
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
+            font-size: clamp(0.75rem, 1.2vw, 0.85rem);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 0.5rem;
+            margin-bottom: clamp(0.4rem, 0.8vw, 0.5rem);
             font-weight: 600;
         }
 
         .summary-value {
             color: var(--white);
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 1.5vw, 1.1rem);
             font-weight: 600;
         }
 
@@ -865,19 +885,19 @@
         }
 
         .summary-total {
-            margin-top: 2rem;
-            padding-top: 2rem;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
             border-top: 2px solid var(--gold);
         }
 
         .summary-total-label {
             color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
+            font-size: clamp(0.9rem, 1.3vw, 1rem);
+            margin-bottom: clamp(0.4rem, 0.8vw, 0.5rem);
         }
 
         .summary-total-value {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 3.5vw, 2.5rem);
             font-weight: 900;
             background: linear-gradient(135deg, var(--gold), var(--gold-light));
             -webkit-background-clip: text;
@@ -889,8 +909,8 @@
         .summary-details {
             background: rgba(255, 215, 0, 0.05);
             border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: clamp(15px, 2.5vw, 20px);
+            padding: var(--spacing-md);
         }
 
         /* Success Modal */
@@ -907,6 +927,7 @@
             justify-content: center;
             z-index: 10000;
             animation: fadeIn 0.5s ease;
+            padding: var(--padding-page);
         }
 
         .success-modal.show {
@@ -922,10 +943,11 @@
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
             backdrop-filter: blur(30px);
             border: 2px solid var(--gold);
-            border-radius: 40px;
-            padding: 5rem 4rem;
+            border-radius: clamp(30px, 5vw, 40px);
+            padding: clamp(3rem, 6vw, 5rem) clamp(2.5rem, 5vw, 4rem);
             text-align: center;
             max-width: 600px;
+            width: 100%;
             animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -954,15 +976,15 @@
         }
 
         .success-icon {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 2rem;
+            width: clamp(100px, 15vw, 120px);
+            height: clamp(100px, 15vw, 120px);
+            margin: 0 auto var(--spacing-md);
             background: linear-gradient(135deg, var(--gold), var(--gold-dark));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: clamp(3rem, 6vw, 4rem);
             color: var(--dark);
             box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6);
             animation: bounce 1s ease;
@@ -976,18 +998,18 @@
         }
 
         .success-title {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 4vw, 2.5rem);
             font-weight: 900;
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-xs);
             color: var(--white);
             position: relative;
             z-index: 1;
         }
 
         .success-message {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-md);
             line-height: 1.8;
             position: relative;
             z-index: 1;
@@ -996,9 +1018,9 @@
         .success-details {
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            border-radius: clamp(15px, 2.5vw, 20px);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
             text-align: left;
             position: relative;
             z-index: 1;
@@ -1007,8 +1029,10 @@
         .success-details p {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-xs);
             color: var(--white);
+            font-size: clamp(0.9rem, 1.3vw, 1rem);
+            gap: var(--spacing-xs);
         }
 
         .success-details p:last-child {
@@ -1020,15 +1044,15 @@
         }
 
         .countdown-text {
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 1.3vw, 1rem);
             color: rgba(255, 255, 255, 0.6);
-            margin-top: 2rem;
+            margin-top: var(--spacing-md);
             position: relative;
             z-index: 1;
         }
 
         .countdown-number {
-            font-size: 2rem;
+            font-size: clamp(1.8rem, 3vw, 2rem);
             font-weight: 900;
             color: var(--gold);
             display: inline-block;
@@ -1040,7 +1064,7 @@
             50% { transform: scale(1.2); }
         }
 
-        /* ============ RESPONSIVO MOBILE ============ */
+        /* RESPONSIVO MOBILE */
         @media (max-width: 1024px) {
             .booking-wrapper {
                 grid-template-columns: 1fr;
@@ -1048,188 +1072,17 @@
 
             .booking-summary {
                 position: static;
-                margin-top: 3rem;
-            }
-
-            .datetime-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .calendar-container {
-                grid-column: span 1;
-            }
-
-            .time-slots {
-                grid-column: span 1;
+                margin-top: var(--spacing-md);
             }
         }
 
         @media (max-width: 768px) {
-            /* Aumentar espaçamento em mobile */
-            nav {
-                padding: 1.25rem 4%;
-            }
-
-            .booking-hero {
-                padding: 10rem 4% 4rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-content p {
-                font-size: 1.1rem;
-            }
-
-            .steps-container {
-                padding: 0 4%;
-                margin-bottom: 4rem;
-            }
-
-            .steps {
-                flex-wrap: wrap;
-                gap: 2rem;
-            }
-
-            .step {
-                flex-basis: calc(50% - 1rem);
-                margin-bottom: 0;
-            }
-
-            .step-circle {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-
-            .booking-container {
-                padding: 0 4% 6rem;
-            }
-
-            .form-container {
-                padding: 2.5rem 2rem;
-                border-radius: 25px;
-            }
-
-            .step-title {
-                font-size: 1.75rem;
-            }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .service-option {
-                padding: 2rem 1.75rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            /* Aumentar área de toque em mobile */
-            .form-group input,
-            .form-group textarea {
-                padding: 1.35rem 1.25rem;
-                font-size: 1rem;
-            }
-
-            .btn {
-                padding: 1.35rem 2rem;
-                font-size: 1rem;
-            }
-
-            .form-actions {
-                flex-direction: column-reverse;
-                gap: 1.25rem;
-            }
-
-            .time-slots {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.25rem;
-            }
-
-            .time-slot {
-                padding: 1.35rem 1rem;
-            }
-
-            .calendar {
-                padding: 1.75rem;
-            }
-
-            .calendar-day {
-                padding: 0.85rem;
-                font-size: 1rem;
-            }
-
-            .summary-card {
-                padding: 2.5rem 2rem;
-            }
-
             .nav-back span {
                 display: none;
             }
 
-            .success-content {
-                padding: 3rem 2rem;
-                margin: 0 1.5rem;
-            }
-
-            .success-icon {
-                width: 100px;
-                height: 100px;
-                font-size: 3rem;
-            }
-
-            .success-title {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .booking-hero {
-                padding: 9rem 3% 3rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .steps {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-
-            .step {
-                flex-basis: 100%;
-            }
-
-            .form-container {
-                padding: 2rem 1.5rem;
-            }
-
-            .time-slots {
-                grid-template-columns: 1fr;
-            }
-
-            .success-content {
-                padding: 2.5rem 1.5rem;
-                margin: 0 1rem;
-            }
-        }
-
-        /* Acessibilidade Touch */
-        @media (hover: none) and (pointer: coarse) {
-            .service-option,
-            .calendar-day,
-            .time-slot,
-            .btn,
-            .form-group input,
-            .form-group textarea {
-                min-height: 48px;
+            .form-actions {
+                flex-direction: column-reverse;
             }
         }
     </style>
@@ -1536,9 +1389,6 @@
         const EMAILJS_PUBLIC_KEY = '_6rQwnRfgTA4yXMlh';
         const EMAILJS_SERVICE_ID = 'service_2wmnn1m';
         const EMAILJS_TEMPLATE_ID = 'template_oj8ynif';
-
-        // API Server URL
-        const API_URL = 'https://elite-barber.onrender.com/api/agendamentos';
 
         emailjs.init(EMAILJS_PUBLIC_KEY);
 
@@ -1863,64 +1713,16 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
             
             try {
-                console.log('📤 Enviando agendamento para o servidor...');
-                
-                // Send to Server
-                await saveBooking();
-                
-                // Send Email
                 await sendConfirmationEmail();
-                
-                // Show Success
+                await saveBooking();
                 showSuccess();
             } catch (error) {
-                console.error('❌ Erro:', error);
+                console.error('Erro:', error);
                 alert('Erro ao processar agendamento. Tente novamente.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmar Agendamento';
             }
         });
-
-        async function saveBooking() {
-            const booking = {
-                nome: bookingState.name,
-                telefone: bookingState.phone,
-                email: bookingState.email,
-                servico: bookingState.service,
-                data: bookingState.date,
-                horario: bookingState.time,
-                mensagem: bookingState.notes || 'Sem observações',
-                status: 'PENDENTE'
-            };
-            
-            console.log('📋 Dados do agendamento:', booking);
-            
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(booking)
-                });
-                
-                const data = await response.json();
-                console.log('✅ Resposta do servidor:', data);
-                
-                if (!response.ok) throw new Error(data.error || 'Erro ao salvar no servidor');
-                
-                return data;
-            } catch (error) {
-                console.warn('⚠️ Erro ao salvar no servidor, salvando localmente:', error.message);
-                
-                // Fallback: Save to localStorage
-                const bookings = JSON.parse(localStorage.getItem('agendamentos') || '[]');
-                bookings.push({
-                    ...booking,
-                    id: Date.now(),
-                    timestamp: new Date().toISOString()
-                });
-                localStorage.setItem('agendamentos', JSON.stringify(bookings));
-            }
-        }
 
         async function sendConfirmationEmail() {
             const orderId = `EB${Date.now().toString().slice(-8)}`;
@@ -1942,13 +1744,29 @@
                 message: bookingState.notes || 'Sem observações'
             };
             
-            console.log('📧 Enviando email de confirmação...');
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+        }
+
+        async function saveBooking() {
+            const booking = {
+                ...bookingState,
+                id: Date.now(),
+                status: 'CONFIRMADO',
+                createdAt: new Date().toISOString()
+            };
             
             try {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-                console.log('✅ Email enviado com sucesso!');
-            } catch (error) {
-                console.warn('⚠️ Erro ao enviar email (não crítico):', error);
+                const response = await fetch('https://elite-barber.onrender.com/api/agendamentos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(booking)
+                });
+                
+                if (!response.ok) throw new Error('Servidor não respondeu');
+            } catch {
+                const bookings = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+                bookings.push(booking);
+                localStorage.setItem('agendamentos', JSON.stringify(bookings));
             }
         }
 
