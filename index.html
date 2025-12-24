@@ -129,7 +129,7 @@
         }
 
         .btn-admin::after {
-            display: none; /* Remove a linha do hover padrão */
+            display: none;
         }
 
         .menu-toggle {
@@ -1215,7 +1215,14 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        const API_URL = 'http://localhost:3000';
+        // DETECÇÃO AUTOMÁTICA DE AMBIENTE
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1';
+
+        const API_URL = isLocalhost ? 'http://localhost:3000' : 'https://elite-barber.onrender.com';
+
+        console.log(`🌐 Ambiente: ${isLocalhost ? 'Local' : 'Produção (Render)'}`);
+        console.log(`📡 API URL: ${API_URL}`);
 
         // HEADER SCROLL EFFECT
         window.addEventListener('scroll', () => {
@@ -1329,19 +1336,19 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formData),
-                    signal: AbortSignal.timeout(5000) // timeout de 5s
+                    signal: AbortSignal.timeout(10000) // timeout de 10s
                 });
 
                 if (response.ok) {
                     btn.textContent = '✓ Agendamento Confirmado!';
                     btn.style.background = '#4CAF50';
-                    console.log('Agendamento salvo no servidor');
+                    console.log('✅ Agendamento salvo no servidor');
                 } else {
                     throw new Error('Servidor não respondeu corretamente');
                 }
             } catch (error) {
                 // Fallback para localStorage quando servidor está offline
-                console.log('Servidor offline, salvando no localStorage...');
+                console.log('⚠️ Servidor offline, salvando no localStorage...');
                 const agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
                 agendamentos.push(formData);
                 localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
