@@ -201,7 +201,7 @@
             }
         }
 
-        /* Navigation - CORRIGIDO (sem botão duplicado) */
+        /* Navigation - CORRIGIDO */
         nav {
             position: fixed;
             top: 0;
@@ -1308,6 +1308,11 @@
         }
 
         /* CTA Section */
+        .cta-section {
+            position: relative;
+            overflow: hidden;
+        }
+
         .cta-section::before {
             content: '';
             position: absolute;
@@ -1580,6 +1585,10 @@
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
             }
         }
 
