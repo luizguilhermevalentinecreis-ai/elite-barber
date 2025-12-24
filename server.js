@@ -134,33 +134,6 @@ app.listen(PORT, () => {
 // 📊 DADOS DE TESTE (opcional)
 // ========================================
 
-// Adicionar alguns agendamentos de teste ao iniciar
-agendamentos.push({
-    id: 1,
-    name: 'João Silva',
-    phone: '(31) 99999-9999',
-    email: 'joao@email.com',
-    service: 'Corte + Barba',
-    date: '25/12/2024',
-    time: '14:00',
-    notes: 'Primeiro cliente',
-    status: 'CONFIRMADO',
-    servicePrice: 70,
-    createdAt: new Date().toISOString()
-});
 
-agendamentos.push({
-    id: 2,
-    name: 'Maria Santos',
-    phone: '(31) 98888-8888',
-    email: 'maria@email.com',
-    service: 'Corte Clássico',
-    date: '26/12/2024',
-    time: '15:30',
-    notes: '',
-    status: 'PENDENTE',
-    servicePrice: 45,
-    createdAt: new Date().toISOString()
-});
 
 console.log('✅ Servidor inicializado com', agendamentos.length, 'agendamentos de teste');
