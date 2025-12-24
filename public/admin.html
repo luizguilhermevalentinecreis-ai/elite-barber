@@ -168,7 +168,6 @@
             z-index: 1;
         }
 
-        /* Back Button in Login */
         .login-back-btn {
             position: absolute;
             top: 2rem;
@@ -998,7 +997,6 @@
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
-            <!-- Back Button -->
             <a href="index.html" class="login-back-btn" title="Voltar para página principal">
                 <i class="fas fa-arrow-left"></i>
             </a>
@@ -1184,7 +1182,6 @@
         // Constants
         const CORRECT_PASSWORD = 'barbearia2025';
         const API_URL = 'https://elite-barber.onrender.com/api';
-        const LOCAL_API = 'http://localhost:3000/api';
 
         // State
         let agendamentos = [];
@@ -1222,24 +1219,14 @@
 
         // Initialize Event Listeners
         function initializeEventListeners() {
-            // Login Form
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
-
-            // Logout Button
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-
-            // Refresh Button
             document.getElementById('refreshBtn').addEventListener('click', loadAgendamentos);
-
-            // Clear All Button
             document.getElementById('clearAllBtn').addEventListener('click', clearAllAgendamentos);
-
-            // Search Input
             document.getElementById('searchInput').addEventListener('input', handleSearch);
-
-            // Filter Buttons
+            
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => handleFilter(btn.dataset.filter));
+                btn.addEventListener('click', (e) => handleFilter(btn.dataset.filter, e));
             });
         }
 
@@ -1281,7 +1268,6 @@
             checkServerStatus();
             loadAgendamentos();
             
-            // Auto refresh every 30 seconds
             setInterval(() => {
                 checkServerStatus();
                 loadAgendamentos();
@@ -1291,12 +1277,8 @@
         // Check Server Status
         async function checkServerStatus() {
             try {
-                const response = await fetch(`${API_URL}/status`);
-                if (response.ok) {
-                    updateServerStatus(true);
-                } else {
-                    updateServerStatus(false);
-                }
+                const response = await fetch(`${API_URL}/agendamentos`);
+                updateServerStatus(response.ok);
             } catch (error) {
                 updateServerStatus(false);
             }
@@ -1316,7 +1298,7 @@
             }
         }
 
-        // Load Agendamentos
+        // Load Agendamentos - ATUALIZADO PARA SERVER.JS
         async function loadAgendamentos() {
             const loading = document.getElementById('loading');
             const tableWrapper = document.getElementById('tableWrapper');
@@ -1329,12 +1311,13 @@
                 
                 if (response.ok) {
                     agendamentos = await response.json();
+                    console.log('✅ Agendamentos carregados do servidor:', agendamentos);
                 } else {
-                    // Fallback to localStorage
+                    console.warn('⚠️ Servidor não respondeu, usando localStorage');
                     agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
                 }
             } catch (error) {
-                console.error('Erro ao carregar agendamentos:', error);
+                console.error('❌ Erro ao carregar do servidor:', error);
                 agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
             }
 
@@ -1348,9 +1331,9 @@
         // Update Stats
         function updateStats() {
             const total = agendamentos.length;
-            const pendentes = agendamentos.filter(a => a.status === 'PENDENTE').length;
-            const confirmados = agendamentos.filter(a => a.status === 'CONFIRMADO').length;
-            const concluidos = agendamentos.filter(a => a.status === 'CONCLUIDO').length;
+            const pendentes = agendamentos.filter(a => (a.status || '').toUpperCase() === 'PENDENTE').length;
+            const confirmados = agendamentos.filter(a => (a.status || '').toUpperCase() === 'CONFIRMADO').length;
+            const concluidos = agendamentos.filter(a => (a.status || '').toUpperCase() === 'CONCLUIDO').length;
 
             document.getElementById('totalAgendamentos').textContent = total;
             document.getElementById('totalPendentes').textContent = pendentes;
@@ -1359,7 +1342,7 @@
         }
 
         // Handle Filter
-        function handleFilter(filter) {
+        function handleFilter(filter, event) {
             currentFilter = filter;
             
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1375,7 +1358,9 @@
             if (currentFilter === 'todos') {
                 filteredAgendamentos = [...agendamentos];
             } else {
-                filteredAgendamentos = agendamentos.filter(a => a.status === currentFilter);
+                filteredAgendamentos = agendamentos.filter(a => 
+                    (a.status || 'PENDENTE').toUpperCase() === currentFilter
+                );
             }
             
             renderAgendamentos();
@@ -1392,10 +1377,10 @@
 
             filteredAgendamentos = agendamentos.filter(a => {
                 return (
-                    a.nome?.toLowerCase().includes(searchTerm) ||
-                    a.telefone?.toLowerCase().includes(searchTerm) ||
-                    a.email?.toLowerCase().includes(searchTerm) ||
-                    a.servico?.toLowerCase().includes(searchTerm)
+                    (a.name || a.nome || '').toLowerCase().includes(searchTerm) ||
+                    (a.phone || a.telefone || '').toLowerCase().includes(searchTerm) ||
+                    (a.email || '').toLowerCase().includes(searchTerm) ||
+                    (a.service || a.servico || '').toLowerCase().includes(searchTerm)
                 );
             });
 
@@ -1422,20 +1407,22 @@
 
             filteredAgendamentos.forEach((agendamento, index) => {
                 const row = document.createElement('tr');
+                const status = (agendamento.status || 'PENDENTE').toUpperCase();
+                
                 row.innerHTML = `
-                    <td data-label="Cliente">${agendamento.nome || agendamento.name || 'N/A'}</td>
-                    <td data-label="Serviço">${agendamento.servico || agendamento.service || 'N/A'}</td>
-                    <td data-label="Data">${formatDate(agendamento.data || agendamento.date)}</td>
-                    <td data-label="Horário">${agendamento.horario || agendamento.time || 'N/A'}</td>
-                    <td data-label="Contato">${agendamento.telefone || agendamento.phone || 'N/A'}</td>
+                    <td data-label="Cliente">${agendamento.name || agendamento.nome || 'N/A'}</td>
+                    <td data-label="Serviço">${agendamento.service || agendamento.servico || 'N/A'}</td>
+                    <td data-label="Data">${agendamento.date || agendamento.data || 'N/A'}</td>
+                    <td data-label="Horário">${agendamento.time || agendamento.horario || 'N/A'}</td>
+                    <td data-label="Contato">${agendamento.phone || agendamento.telefone || 'N/A'}</td>
                     <td data-label="Status">
-                        <span class="status-badge status-${(agendamento.status || 'PENDENTE').toLowerCase()}">
-                            ${agendamento.status || 'PENDENTE'}
+                        <span class="status-badge status-${status.toLowerCase()}">
+                            ${status}
                         </span>
                     </td>
                     <td data-label="Ações">
                         <div class="action-buttons">
-                            ${agendamento.status !== 'CONCLUIDO' ? `
+                            ${status !== 'CONCLUIDO' ? `
                                 <button class="action-btn btn-complete" onclick="markAsComplete(${index})" title="Marcar como Concluído">
                                     <i class="fas fa-check"></i>
                                 </button>
@@ -1453,17 +1440,6 @@
             });
         }
 
-        // Format Date
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('pt-BR');
-            } catch {
-                return dateString;
-            }
-        }
-
         // Mark as Complete
         async function markAsComplete(index) {
             if (!confirm('Marcar este agendamento como concluído?')) return;
@@ -1474,19 +1450,17 @@
             agendamentos[originalIndex].status = 'CONCLUIDO';
 
             try {
-                // Save to server
-                await fetch(`${API_URL}/agendamentos`, {
-                    method: 'POST',
+                await fetch(`${API_URL}/agendamentos/${agendamento.id}`, {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(agendamentos[originalIndex])
                 });
+                console.log('✅ Status atualizado no servidor');
             } catch (error) {
-                console.error('Erro ao atualizar no servidor:', error);
+                console.error('❌ Erro ao atualizar no servidor:', error);
             }
 
-            // Save to localStorage
             localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-
             loadAgendamentos();
         }
 
@@ -1500,11 +1474,12 @@
             agendamentos.splice(originalIndex, 1);
 
             try {
-                await fetch(`${API_URL}/agendamentos/${originalIndex}`, {
+                await fetch(`${API_URL}/agendamentos/${agendamento.id}`, {
                     method: 'DELETE'
                 });
+                console.log('✅ Agendamento excluído do servidor');
             } catch (error) {
-                console.error('Erro ao excluir no servidor:', error);
+                console.error('❌ Erro ao excluir do servidor:', error);
             }
 
             localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
@@ -1519,11 +1494,12 @@
             agendamentos = [];
 
             try {
-                await fetch(`${API_URL}/agendamentos`, {
+                await fetch(`${API_URL}/agendamentos/clear`, {
                     method: 'DELETE'
                 });
+                console.log('✅ Todos agendamentos excluídos do servidor');
             } catch (error) {
-                console.error('Erro ao limpar no servidor:', error);
+                console.error('❌ Erro ao limpar servidor:', error);
             }
 
             localStorage.setItem('agendamentos', JSON.stringify([]));
@@ -1539,7 +1515,7 @@
             modalBody.innerHTML = `
                 <div class="detail-row">
                     <div class="detail-label">Nome Completo</div>
-                    <div class="detail-value">${agendamento.nome || agendamento.name || 'N/A'}</div>
+                    <div class="detail-value">${agendamento.name || agendamento.nome || 'N/A'}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Email</div>
@@ -1547,37 +1523,37 @@
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Telefone</div>
-                    <div class="detail-value">${agendamento.telefone || agendamento.phone || 'N/A'}</div>
+                    <div class="detail-value">${agendamento.phone || agendamento.telefone || 'N/A'}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Serviço</div>
-                    <div class="detail-value">${agendamento.servico || agendamento.service || 'N/A'}</div>
+                    <div class="detail-value">${agendamento.service || agendamento.servico || 'N/A'}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Data</div>
-                    <div class="detail-value">${formatDate(agendamento.data || agendamento.date)}</div>
+                    <div class="detail-value">${agendamento.date || agendamento.data || 'N/A'}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Horário</div>
-                    <div class="detail-value">${agendamento.horario || agendamento.time || 'N/A'}</div>
+                    <div class="detail-value">${agendamento.time || agendamento.horario || 'N/A'}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Status</div>
                     <div class="detail-value">
                         <span class="status-badge status-${(agendamento.status || 'PENDENTE').toLowerCase()}">
-                            ${agendamento.status || 'PENDENTE'}
+                            ${(agendamento.status || 'PENDENTE').toUpperCase()}
                         </span>
                     </div>
                 </div>
-                ${agendamento.mensagem || agendamento.notes ? `
+                ${agendamento.notes || agendamento.mensagem ? `
                     <div class="detail-row">
                         <div class="detail-label">Observações</div>
-                        <div class="detail-value">${agendamento.mensagem || agendamento.notes}</div>
+                        <div class="detail-value">${agendamento.notes || agendamento.mensagem}</div>
                     </div>
                 ` : ''}
                 <div class="detail-row">
-                    <div class="detail-label">Data de Criação</div>
-                    <div class="detail-value">${formatDate(agendamento.timestamp || agendamento.createdAt)}</div>
+                    <div class="detail-label">ID do Agendamento</div>
+                    <div class="detail-value">${agendamento.id || 'N/A'}</div>
                 </div>
             `;
 
@@ -1589,7 +1565,6 @@
             document.getElementById('detailModal').classList.remove('show');
         }
 
-        // Close modal on outside click
         document.getElementById('detailModal').addEventListener('click', (e) => {
             if (e.target.id === 'detailModal') {
                 closeModal();
