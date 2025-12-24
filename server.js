@@ -10,10 +10,13 @@ const PORT = process.env.PORT || 3000;
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
 // Arquivo de dados
 const DATA_FILE = path.join(__dirname, 'agendamentos.json');
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+// Servir arquivos estáticos da pasta public
+app.use(express.static(PUBLIC_DIR));
 
 // ========== NODEMAILER CONFIGURATION ==========
 const transporter = nodemailer.createTransport({
@@ -353,7 +356,7 @@ app.post('/api/send-marketing', async (req, res) => {
 
 // Rota catch-all para SPA
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
 // ========== SERVER START ==========
