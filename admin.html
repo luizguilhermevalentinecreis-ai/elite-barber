@@ -220,6 +220,7 @@
             font-weight: 600;
             letter-spacing: 1px;
             text-transform: uppercase;
+            margin-left: 0.5rem;
         }
 
         .status-badge.online {
@@ -232,6 +233,149 @@
             background: rgba(255, 152, 0, 0.2);
             color: #FF9800;
             border: 2px solid #FF9800;
+        }
+
+        .status-badge.simulado {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+            border: 2px solid #FF9800;
+        }
+
+        .status-badge.real {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+
+        .env-indicator {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: #999;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab:hover {
+            color: var(--gold);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* CONFIG SECTION */
+        .config-box {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            padding: 3rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2);
+        }
+
+        .config-box h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            color: var(--light);
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            color: #666;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .info-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 152, 0, 0.1);
+            border-left: 4px solid #FF9800;
+        }
+
+        .info-box strong {
+            color: #FF9800;
+        }
+
+        .info-box ol {
+            color: #ccc;
+            margin-top: 1rem;
+            line-height: 2;
+            margin-left: 1.5rem;
+        }
+
+        .info-box a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .info-box a:hover {
+            text-decoration: underline;
         }
 
         .controls {
@@ -430,10 +574,17 @@
             margin-bottom: 1rem;
         }
 
-        .env-indicator {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 0.5rem;
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gold);
+            font-size: 1.2rem;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* RESPONSIVE */
@@ -456,6 +607,15 @@
                 font-size: 1.8rem;
             }
 
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+                text-align: center;
+            }
+
             .controls {
                 flex-direction: column;
             }
@@ -468,6 +628,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .config-box {
+                padding: 2rem;
+            }
+
             table {
                 font-size: 0.85rem;
             }
@@ -475,19 +639,6 @@
             th, td {
                 padding: 0.8rem 0.5rem;
             }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gold);
-            font-size: 1.2rem;
-            animation: pulse 1.5s ease infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
         }
     </style>
 </head>
@@ -519,73 +670,127 @@
         <div class="admin-header">
             <div>
                 <div class="logo">ELITE BARBER CLUB</div>
-                <h1>Agendamentos</h1>
+                <h1>Painel Admin</h1>
                 <div class="env-indicator" id="envIndicator">🔄 Detectando ambiente...</div>
             </div>
             <div>
-                <span class="status-badge" id="statusBadge">
-                    🔄 Verificando...
-                </span>
+                <span class="status-badge" id="statusBadge">🔄 Verificando...</span>
+                <span class="status-badge" id="paymentStatus">⚠️ Simulado</span>
             </div>
         </div>
 
-        <!-- CONTROLS -->
-        <div class="controls">
-            <div class="search-box">
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="Buscar por nome, telefone, email..."
-                >
-            </div>
-            <button class="btn" onclick="loadAgendamentos()">🔄 Atualizar</button>
-            <button class="btn btn-secondary" onclick="exportCSV()">📊 Exportar CSV</button>
-            <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpar Tudo</button>
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" data-tab="agendamentos">📋 Agendamentos</button>
+            <button class="tab" data-tab="config">⚙️ Configurações</button>
         </div>
 
-        <!-- STATS -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="number" id="totalAgendamentos">0</div>
-                <div class="label">Total de Agendamentos</div>
+        <!-- TAB: AGENDAMENTOS -->
+        <div id="agendamentos" class="tab-content active">
+            <!-- STATS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number" id="totalAgendamentos">0</div>
+                    <div class="label">Total de Agendamentos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="agendamentosHoje">0</div>
+                    <div class="label">Hoje</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="agendamentosSemana">0</div>
+                    <div class="label">Esta Semana</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="number" id="agendamentosHoje">0</div>
-                <div class="label">Hoje</div>
+
+            <!-- CONTROLS -->
+            <div class="controls">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Buscar por nome, telefone, email..."
+                    >
+                </div>
+                <button class="btn" onclick="loadAgendamentos()">🔄 Atualizar</button>
+                <button class="btn btn-secondary" onclick="exportCSV()">📊 Exportar CSV</button>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpar Tudo</button>
             </div>
-            <div class="stat-card">
-                <div class="number" id="agendamentosSemana">0</div>
-                <div class="label">Esta Semana</div>
+
+            <!-- TABLE -->
+            <div class="table-container">
+                <div id="loadingIndicator" class="loading">
+                    Carregando agendamentos...
+                </div>
+                <table id="agendamentosTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Observações</th>
+                            <th>Status</th>
+                            <th>Registrado em</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agendamentosBody">
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="icon">📅</div>
+                    <h3>Nenhum Agendamento</h3>
+                    <p>Ainda não há agendamentos registrados no sistema.</p>
+                </div>
             </div>
         </div>
 
-        <!-- TABLE -->
-        <div class="table-container">
-            <div id="loadingIndicator" class="loading">
-                Carregando agendamentos...
-            </div>
-            <table id="agendamentosTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nome</th>
-                        <th>Telefone</th>
-                        <th>Email</th>
-                        <th>Serviço</th>
-                        <th>Data</th>
-                        <th>Horário</th>
-                        <th>Observações</th>
-                        <th>Registrado em</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="agendamentosBody">
-                </tbody>
-            </table>
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <div class="icon">📅</div>
-                <h3>Nenhum Agendamento</h3>
-                <p>Ainda não há agendamentos registrados no sistema.</p>
+        <!-- TAB: CONFIGURAÇÕES -->
+        <div id="config" class="tab-content">
+            <div class="config-box">
+                <h3>💳 Configuração de Pagamento - Mercado Pago</h3>
+                <p style="color: #999; margin-bottom: 2rem; line-height: 1.6;">
+                    Configure as chaves de API do Mercado Pago para ativar pagamentos reais.
+                    Deixe em branco para usar modo simulação (pagamento não será processado).
+                </p>
+
+                <form id="configForm">
+                    <div class="form-group">
+                        <label>🔑 Public Key (Chave Pública)</label>
+                        <input type="text" id="mpPublicKey" placeholder="APP-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+                        <small>Exemplo: APP-1234567890-121212-abcdef123456-98765432</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🔐 Access Token (Chave Privada)</label>
+                        <input type="text" id="mpAccessToken" placeholder="APP-xxxxxxxxxxxx-xxxxxxxx-xxxxxxxxxxxx">
+                        <small>Esta chave ficará armazenada de forma segura no servidor</small>
+                    </div>
+
+                    <button type="submit" class="btn">💾 Salvar Configurações</button>
+                </form>
+
+                <div class="info-box">
+                    <strong>ℹ️ Como obter as chaves do Mercado Pago:</strong>
+                    <ol>
+                        <li>Acesse: <a href="https://www.mercadopago.com.br/developers" target="_blank">Mercado Pago Developers</a></li>
+                        <li>Faça login na sua conta</li>
+                        <li>Clique em "Suas integrações" → "Criar aplicação"</li>
+                        <li>Vá em "Credenciais" e copie as chaves de produção</li>
+                        <li>Cole aqui e salve</li>
+                    </ol>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50;">
+                    <strong style="color: #4CAF50;">✅ Status Atual:</strong>
+                    <p id="configStatus" style="color: #ccc; margin-top: 0.5rem;">
+                        Verificando configuração...
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -596,7 +801,6 @@
                            window.location.hostname === '127.0.0.1' ||
                            window.location.hostname === '';
         
-        // URL do servidor no Render
         const API_URL = isLocalhost ? 'http://localhost:3000' : 'https://elite-barber.onrender.com';
         
         const CORRECT_PASSWORD = 'barbearia2025';
@@ -628,6 +832,7 @@
                 document.getElementById('loginContainer').classList.add('hidden');
                 document.getElementById('adminPanel').classList.add('visible');
                 loadAgendamentos();
+                checkPaymentConfig();
             } else {
                 errorMessage.classList.add('show');
                 document.getElementById('passwordInput').value = '';
@@ -635,6 +840,69 @@
                     errorMessage.classList.remove('show');
                 }, 3000);
             }
+        });
+
+        // TABS
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // CHECK PAYMENT CONFIG
+        function checkPaymentConfig() {
+            const config = JSON.parse(localStorage.getItem('mpConfig') || '{}');
+            const statusEl = document.getElementById('paymentStatus');
+            const configStatusEl = document.getElementById('configStatus');
+            
+            if (config.publicKey && config.accessToken) {
+                statusEl.className = 'status-badge real';
+                statusEl.textContent = '✅ Pagamento Real';
+                if (configStatusEl) {
+                    configStatusEl.innerHTML = '✅ API do Mercado Pago configurada. Pagamentos reais ativos.';
+                }
+            } else {
+                statusEl.className = 'status-badge simulado';
+                statusEl.textContent = '⚠️ Simulado';
+                if (configStatusEl) {
+                    configStatusEl.innerHTML = '⚠️ Nenhuma API configurada. Sistema em modo simulação.';
+                }
+            }
+
+            // Preencher campos
+            if (document.getElementById('mpPublicKey')) {
+                document.getElementById('mpPublicKey').value = config.publicKey || '';
+                document.getElementById('mpAccessToken').value = config.accessToken || '';
+            }
+        }
+
+        // SAVE CONFIG
+        document.getElementById('configForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const config = {
+                publicKey: document.getElementById('mpPublicKey').value.trim(),
+                accessToken: document.getElementById('mpAccessToken').value.trim()
+            };
+
+            localStorage.setItem('mpConfig', JSON.stringify(config));
+
+            try {
+                await fetch(`${API_URL}/api/config/payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+            } catch (error) {
+                console.log('Config salva localmente');
+            }
+
+            alert('✅ Configurações salvas com sucesso!');
+            checkPaymentConfig();
         });
 
         // CHECK SERVER STATUS
@@ -669,12 +937,10 @@
 
             try {
                 if (isServerOnline) {
-                    // Carrega do servidor
                     const response = await fetch(`${API_URL}/api/agendamentos`);
                     allAgendamentos = await response.json();
                     console.log(`✅ ${allAgendamentos.length} agendamentos carregados do servidor`);
                 } else {
-                    // Carrega do localStorage
                     allAgendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
                     console.log(`📦 ${allAgendamentos.length} agendamentos carregados do localStorage`);
                 }
@@ -718,6 +984,7 @@
                     <td>${dataFormatada}</td>
                     <td><strong>${agendamento.horario}</strong></td>
                     <td>${agendamento.mensagem || 'N/A'}</td>
+                    <td>${agendamento.status || 'PENDENTE'}</td>
                     <td>${timestampFormatado}</td>
                     <td>
                         <button class="btn-small" onclick="deleteAgendamento(${index})">
@@ -792,7 +1059,7 @@
                 return;
             }
 
-            const headers = ['Nome', 'Telefone', 'Email', 'Serviço', 'Data', 'Horário', 'Observações', 'Registrado em'];
+            const headers = ['Nome', 'Telefone', 'Email', 'Serviço', 'Data', 'Horário', 'Observações', 'Status', 'Registrado em'];
             const rows = allAgendamentos.map(a => [
                 a.nome,
                 a.telefone,
@@ -801,6 +1068,7 @@
                 new Date(a.data).toLocaleDateString('pt-BR'),
                 a.horario,
                 a.mensagem || 'N/A',
+                a.status || 'PENDENTE',
                 new Date(a.timestamp).toLocaleString('pt-BR')
             ]);
 
