@@ -430,6 +430,12 @@
             margin-bottom: 1rem;
         }
 
+        .env-indicator {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .login-box {
@@ -514,6 +520,7 @@
             <div>
                 <div class="logo">ELITE BARBER CLUB</div>
                 <h1>Agendamentos</h1>
+                <div class="env-indicator" id="envIndicator">🔄 Detectando ambiente...</div>
             </div>
             <div>
                 <span class="status-badge" id="statusBadge">
@@ -584,10 +591,32 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000';
+        // DETECÇÃO AUTOMÁTICA DE AMBIENTE
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1' ||
+                           window.location.hostname === '';
+        
+        // URL do servidor no Render
+        const API_URL = isLocalhost ? 'http://localhost:3000' : 'https://elite-barber.onrender.com';
+        
         const CORRECT_PASSWORD = 'barbearia2025';
         let allAgendamentos = [];
         let isServerOnline = false;
+
+        console.log(`🌐 Ambiente: ${isLocalhost ? 'Desenvolvimento Local' : 'Produção (Render)'}`);
+        console.log(`📡 API URL: ${API_URL}`);
+
+        // Mostrar ambiente atual
+        document.addEventListener('DOMContentLoaded', () => {
+            const envIndicator = document.getElementById('envIndicator');
+            if (isLocalhost) {
+                envIndicator.textContent = '💻 Ambiente: Desenvolvimento Local';
+                envIndicator.style.color = '#4CAF50';
+            } else {
+                envIndicator.textContent = '🌐 Ambiente: Produção (Render)';
+                envIndicator.style.color = '#2196F3';
+            }
+        });
 
         // LOGIN
         document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -612,11 +641,12 @@
         async function checkServerStatus() {
             try {
                 const response = await fetch(`${API_URL}/api/status`, {
-                    signal: AbortSignal.timeout(3000)
+                    signal: AbortSignal.timeout(10000)
                 });
                 isServerOnline = response.ok;
             } catch (error) {
                 isServerOnline = false;
+                console.warn('⚠️ Servidor offline, usando localStorage:', error.message);
             }
 
             const badge = document.getElementById('statusBadge');
@@ -642,15 +672,17 @@
                     // Carrega do servidor
                     const response = await fetch(`${API_URL}/api/agendamentos`);
                     allAgendamentos = await response.json();
+                    console.log(`✅ ${allAgendamentos.length} agendamentos carregados do servidor`);
                 } else {
                     // Carrega do localStorage
                     allAgendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+                    console.log(`📦 ${allAgendamentos.length} agendamentos carregados do localStorage`);
                 }
 
                 renderAgendamentos(allAgendamentos);
                 updateStats(allAgendamentos);
             } catch (error) {
-                console.error('Erro ao carregar agendamentos:', error);
+                console.error('❌ Erro ao carregar agendamentos:', error);
                 allAgendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
                 renderAgendamentos(allAgendamentos);
                 updateStats(allAgendamentos);
@@ -743,9 +775,9 @@
                 localStorage.setItem('agendamentos', JSON.stringify(allAgendamentos));
                 renderAgendamentos(allAgendamentos);
                 updateStats(allAgendamentos);
-                alert('Agendamento excluído com sucesso!');
+                alert('✅ Agendamento excluído com sucesso!');
             } catch (error) {
-                console.error('Erro ao excluir:', error);
+                console.error('❌ Erro ao excluir:', error);
                 allAgendamentos.splice(index, 1);
                 localStorage.setItem('agendamentos', JSON.stringify(allAgendamentos));
                 renderAgendamentos(allAgendamentos);
@@ -780,12 +812,14 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `agendamentos_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `agendamentos_elite-barber_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
+            
+            console.log('📊 CSV exportado com sucesso!');
         }
 
         // CLEAR ALL DATA
-        function clearAllData() {
+        async function clearAllData() {
             if (!confirm('⚠️ ATENÇÃO! Isso irá excluir TODOS os agendamentos permanentemente. Deseja continuar?')) {
                 return;
             }
@@ -794,11 +828,21 @@
                 return;
             }
 
+            try {
+                if (isServerOnline) {
+                    await fetch(`${API_URL}/api/agendamentos`, {
+                        method: 'DELETE'
+                    });
+                }
+            } catch (error) {
+                console.error('⚠️ Erro ao limpar servidor:', error);
+            }
+
             localStorage.removeItem('agendamentos');
             allAgendamentos = [];
             renderAgendamentos(allAgendamentos);
             updateStats(allAgendamentos);
-            alert('Todos os agendamentos foram excluídos!');
+            alert('✅ Todos os agendamentos foram excluídos!');
         }
 
         // AUTO REFRESH
