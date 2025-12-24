@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Barber - Painel Administrativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --dark: #0a0a0a;
+            --light: #f5f5f5;
+            --gray: #333;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: var(--light);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212, 175, 55, 0.03) 35px, rgba(212, 175, 55, 0.03) 70px);
+            animation: movePattern 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes movePattern {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(70px) translateY(70px); }
+        }
+
+        /* LOGIN SCREEN */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .login-container.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-box {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            padding: 4rem;
+            border: 3px solid var(--gold);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.4);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-box h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .login-box p {
+            color: #999;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .login-form input {
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            color: var(--light);
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .login-form button {
+            padding: 1.2rem;
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .login-form button:hover {
+            background: var(--light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* ADMIN PANEL */
+        .admin-panel {
+            display: none;
+            padding: 2rem 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-panel.visible {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border: 2px solid var(--gold);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .admin-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .admin-header .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .status-badge.online {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+
+        .status-badge.offline {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+            border: 2px solid #FF9800;
+        }
+
+        .controls {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            color: var(--light);
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: 'Montserrat', sans-serif;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: var(--light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            padding: 2rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.4s ease;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.4);
+        }
+
+        .stat-card .number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--gold);
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            color: #999;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .table-container {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border: 2px solid var(--gold);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        th {
+            padding: 1.5rem 1rem;
+            text-align: left;
+            color: var(--gold);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        td {
+            padding: 1.2rem 1rem;
+            color: #ccc;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            font-size: 0.95rem;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            border: none;
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .btn-small:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 2rem;
+            }
+
+            .login-box h1 {
+                font-size: 2rem;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .admin-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.8rem 0.5rem;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gold);
+            font-size: 1.2rem;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h1>Elite Barber</h1>
+            <p>Painel Administrativo</p>
+            <form class="login-form" id="loginForm">
+                <input 
+                    type="password" 
+                    id="passwordInput" 
+                    placeholder="Digite a senha"
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit">Acessar Painel</button>
+                <div class="error-message" id="errorMessage">
+                    ❌ Senha incorreta! Tente novamente.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-panel" id="adminPanel">
+        <!-- HEADER -->
+        <div class="admin-header">
+            <div>
+                <div class="logo">ELITE BARBER CLUB</div>
+                <h1>Agendamentos</h1>
+            </div>
+            <div>
+                <span class="status-badge" id="statusBadge">
+                    🔄 Verificando...
+                </span>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Buscar por nome, telefone, email..."
+                >
+            </div>
+            <button class="btn" onclick="loadAgendamentos()">🔄 Atualizar</button>
+            <button class="btn btn-secondary" onclick="exportCSV()">📊 Exportar CSV</button>
+            <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpar Tudo</button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number" id="totalAgendamentos">0</div>
+                <div class="label">Total de Agendamentos</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="agendamentosHoje">0</div>
+                <div class="label">Hoje</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="agendamentosSemana">0</div>
+                <div class="label">Esta Semana</div>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container">
+            <div id="loadingIndicator" class="loading">
+                Carregando agendamentos...
+            </div>
+            <table id="agendamentosTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Serviço</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Observações</th>
+                        <th>Registrado em</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="agendamentosBody">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="icon">📅</div>
+                <h3>Nenhum Agendamento</h3>
+                <p>Ainda não há agendamentos registrados no sistema.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        const CORRECT_PASSWORD = 'barbearia2025';
+        let allAgendamentos = [];
+        let isServerOnline = false;
+
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (password === CORRECT_PASSWORD) {
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('adminPanel').classList.add('visible');
+                loadAgendamentos();
+            } else {
+                errorMessage.classList.add('show');
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+            }
+        });
+
+        // CHECK SERVER STATUS
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${API_URL}/api/status`, {
+                    signal: AbortSignal.timeout(3000)
+                });
+                isServerOnline = response.ok;
+            } catch (error) {
+                isServerOnline = false;
+            }
+
+            const badge = document.getElementById('statusBadge');
+            if (isServerOnline) {
+                badge.className = 'status-badge online';
+                badge.textContent = '🟢 Servidor Online';
+            } else {
+                badge.className = 'status-badge offline';
+                badge.textContent = '🟡 Modo Local';
+            }
+        }
+
+        // LOAD AGENDAMENTOS
+        async function loadAgendamentos() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('agendamentosTable').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            await checkServerStatus();
+
+            try {
+                if (isServerOnline) {
+                    // Carrega do servidor
+                    const response = await fetch(`${API_URL}/api/agendamentos`);
+                    allAgendamentos = await response.json();
+                } else {
+                    // Carrega do localStorage
+                    allAgendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+                }
+
+                renderAgendamentos(allAgendamentos);
+                updateStats(allAgendamentos);
+            } catch (error) {
+                console.error('Erro ao carregar agendamentos:', error);
+                allAgendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+                renderAgendamentos(allAgendamentos);
+                updateStats(allAgendamentos);
+            }
+        }
+
+        // RENDER TABLE
+        function renderAgendamentos(agendamentos) {
+            document.getElementById('loadingIndicator').style.display = 'none';
+
+            if (agendamentos.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('agendamentosTable').style.display = 'table';
+            const tbody = document.getElementById('agendamentosBody');
+            tbody.innerHTML = '';
+
+            agendamentos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            agendamentos.forEach((agendamento, index) => {
+                const row = document.createElement('tr');
+                const dataFormatada = new Date(agendamento.data).toLocaleDateString('pt-BR');
+                const timestampFormatado = new Date(agendamento.timestamp).toLocaleString('pt-BR');
+
+                row.innerHTML = `
+                    <td><strong>${index + 1}</strong></td>
+                    <td><strong>${agendamento.nome}</strong></td>
+                    <td>${agendamento.telefone}</td>
+                    <td>${agendamento.email}</td>
+                    <td><strong style="color: var(--gold)">${agendamento.servico}</strong></td>
+                    <td>${dataFormatada}</td>
+                    <td><strong>${agendamento.horario}</strong></td>
+                    <td>${agendamento.mensagem || 'N/A'}</td>
+                    <td>${timestampFormatado}</td>
+                    <td>
+                        <button class="btn-small" onclick="deleteAgendamento(${index})">
+                            🗑️ Excluir
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // UPDATE STATS
+        function updateStats(agendamentos) {
+            const hoje = new Date().toISOString().split('T')[0];
+            const inicioSemana = new Date();
+            inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay());
+
+            const agendamentosHoje = agendamentos.filter(a => a.data === hoje).length;
+            const agendamentosSemana = agendamentos.filter(a => {
+                const dataAgendamento = new Date(a.data);
+                return dataAgendamento >= inicioSemana;
+            }).length;
+
+            document.getElementById('totalAgendamentos').textContent = agendamentos.length;
+            document.getElementById('agendamentosHoje').textContent = agendamentosHoje;
+            document.getElementById('agendamentosSemana').textContent = agendamentosSemana;
+        }
+
+        // SEARCH
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allAgendamentos.filter(agendamento => 
+                agendamento.nome.toLowerCase().includes(searchTerm) ||
+                agendamento.telefone.includes(searchTerm) ||
+                agendamento.email.toLowerCase().includes(searchTerm) ||
+                agendamento.servico.toLowerCase().includes(searchTerm)
+            );
+            renderAgendamentos(filtered);
+        });
+
+        // DELETE AGENDAMENTO
+        async function deleteAgendamento(index) {
+            if (!confirm('Tem certeza que deseja excluir este agendamento?')) {
+                return;
+            }
+
+            try {
+                if (isServerOnline) {
+                    await fetch(`${API_URL}/api/agendamentos/${index}`, {
+                        method: 'DELETE'
+                    });
+                }
+                
+                allAgendamentos.splice(index, 1);
+                localStorage.setItem('agendamentos', JSON.stringify(allAgendamentos));
+                renderAgendamentos(allAgendamentos);
+                updateStats(allAgendamentos);
+                alert('Agendamento excluído com sucesso!');
+            } catch (error) {
+                console.error('Erro ao excluir:', error);
+                allAgendamentos.splice(index, 1);
+                localStorage.setItem('agendamentos', JSON.stringify(allAgendamentos));
+                renderAgendamentos(allAgendamentos);
+                updateStats(allAgendamentos);
+            }
+        }
+
+        // EXPORT CSV
+        function exportCSV() {
+            if (allAgendamentos.length === 0) {
+                alert('Não há agendamentos para exportar!');
+                return;
+            }
+
+            const headers = ['Nome', 'Telefone', 'Email', 'Serviço', 'Data', 'Horário', 'Observações', 'Registrado em'];
+            const rows = allAgendamentos.map(a => [
+                a.nome,
+                a.telefone,
+                a.email,
+                a.servico,
+                new Date(a.data).toLocaleDateString('pt-BR'),
+                a.horario,
+                a.mensagem || 'N/A',
+                new Date(a.timestamp).toLocaleString('pt-BR')
+            ]);
+
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `agendamentos_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // CLEAR ALL DATA
+        function clearAllData() {
+            if (!confirm('⚠️ ATENÇÃO! Isso irá excluir TODOS os agendamentos permanentemente. Deseja continuar?')) {
+                return;
+            }
+
+            if (!confirm('Tem ABSOLUTA CERTEZA? Esta ação não pode ser desfeita!')) {
+                return;
+            }
+
+            localStorage.removeItem('agendamentos');
+            allAgendamentos = [];
+            renderAgendamentos(allAgendamentos);
+            updateStats(allAgendamentos);
+            alert('Todos os agendamentos foram excluídos!');
+        }
+
+        // AUTO REFRESH
+        setInterval(() => {
+            if (document.getElementById('adminPanel').classList.contains('visible')) {
+                loadAgendamentos();
+            }
+        }, 30000); // Atualiza a cada 30 segundos
+    </script>
+</body>
+</html>
