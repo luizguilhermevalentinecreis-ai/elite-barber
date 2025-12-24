@@ -103,7 +103,6 @@
             width: 100%;
         }
 
-        /* BOTÃO VER AGENDAMENTOS */
         .btn-admin {
             padding: 0.8rem 1.5rem;
             background: rgba(212, 175, 55, 0.15);
@@ -1142,12 +1141,12 @@
                     <label for="servico">Serviço</label>
                     <select id="servico" name="servico" required>
                         <option value="">Selecione um serviço</option>
-                        <option value="Corte Premium">Corte Premium - R$ 35</option>
-                        <option value="Barba & Bigode">Barba & Bigode - R$ 25</option>
-                        <option value="Corte + Barba">Corte + Barba - R$ 50</option>
-                        <option value="Barboterapia">Barboterapia - R$ 45</option>
-                        <option value="Nevou/Luzes">Nevou/Luzes - R$ 80</option>
-                        <option value="Pacote Completo">Pacote Completo - R$ 90</option>
+                        <option value="Corte Premium" data-price="R$ 35,00">Corte Premium - R$ 35</option>
+                        <option value="Barba & Bigode" data-price="R$ 25,00">Barba & Bigode - R$ 25</option>
+                        <option value="Corte + Barba" data-price="R$ 50,00">Corte + Barba - R$ 50</option>
+                        <option value="Barboterapia" data-price="R$ 45,00">Barboterapia - R$ 45</option>
+                        <option value="Nevou/Luzes" data-price="R$ 80,00">Nevou/Luzes - R$ 80</option>
+                        <option value="Pacote Completo" data-price="R$ 90,00">Pacote Completo - R$ 90</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1162,7 +1161,7 @@
                     <label for="mensagem">Observações</label>
                     <textarea id="mensagem" name="mensagem"></textarea>
                 </div>
-                <button type="submit" class="submit-btn" id="submitBtn">Confirmar Agendamento</button>
+                <button type="submit" class="submit-btn" id="submitBtn">💳 Prosseguir para Pagamento</button>
             </form>
         </div>
     </section>
@@ -1215,15 +1214,6 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        // DETECÇÃO AUTOMÁTICA DE AMBIENTE
-        const isLocalhost = window.location.hostname === 'localhost' || 
-                           window.location.hostname === '127.0.0.1';
-
-        const API_URL = isLocalhost ? 'http://localhost:3000' : 'https://elite-barber.onrender.com';
-
-        console.log(`🌐 Ambiente: ${isLocalhost ? 'Local' : 'Produção (Render)'}`);
-        console.log(`📡 API URL: ${API_URL}`);
-
         // HEADER SCROLL EFFECT
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
@@ -1307,63 +1297,49 @@
 
         createParticles();
 
-        // FORM SUBMISSION COM SISTEMA DE AGENDAMENTO FUNCIONAL
-        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        // MAPEAMENTO DE PREÇOS
+        const servicePrices = {
+            'Corte Premium': 'R$ 35,00',
+            'Barba & Bigode': 'R$ 25,00',
+            'Corte + Barba': 'R$ 50,00',
+            'Barboterapia': 'R$ 45,00',
+            'Nevou/Luzes': 'R$ 80,00',
+            'Pacote Completo': 'R$ 90,00'
+        };
+
+        // FORM SUBMISSION - SALVA NO LOCALSTORAGE E REDIRECIONA PARA PAGAMENTO
+        document.getElementById('bookingForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
             const btn = document.getElementById('submitBtn');
             const originalText = btn.textContent;
             btn.disabled = true;
-            btn.textContent = 'Enviando...';
+            btn.textContent = '⏳ Preparando pagamento...';
             btn.style.background = '#999';
             
-            const formData = {
+            // Coletar dados do formulário
+            const servicoSelecionado = document.getElementById('servico').value;
+            const bookingData = {
                 nome: document.getElementById('nome').value,
                 telefone: document.getElementById('telefone').value,
                 email: document.getElementById('email').value,
-                servico: document.getElementById('servico').value,
+                servico: servicoSelecionado,
+                valor: servicePrices[servicoSelecionado] || 'R$ 0,00',
                 data: document.getElementById('data').value,
                 horario: document.getElementById('horario').value,
                 mensagem: document.getElementById('mensagem').value || 'Sem observações',
                 timestamp: new Date().toISOString()
             };
 
-            try {
-                // Tenta salvar no servidor primeiro
-                const response = await fetch(`${API_URL}/api/agendamentos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                    signal: AbortSignal.timeout(10000) // timeout de 10s
-                });
-
-                if (response.ok) {
-                    btn.textContent = '✓ Agendamento Confirmado!';
-                    btn.style.background = '#4CAF50';
-                    console.log('✅ Agendamento salvo no servidor');
-                } else {
-                    throw new Error('Servidor não respondeu corretamente');
-                }
-            } catch (error) {
-                // Fallback para localStorage quando servidor está offline
-                console.log('⚠️ Servidor offline, salvando no localStorage...');
-                const agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
-                agendamentos.push(formData);
-                localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-                
-                btn.textContent = '✓ Salvo Localmente!';
-                btn.style.background = '#FFA500';
-            }
+            // Salvar temporariamente no localStorage (MUDANÇA AQUI)
+            localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
             
+            console.log('📋 Dados salvos no localStorage para pagamento:', bookingData);
+            
+            // Redirecionar para página de pagamento após 1 segundo
             setTimeout(() => {
-                e.target.reset();
-                btn.textContent = originalText;
-                btn.style.background = '';
-                btn.disabled = false;
-                alert('Obrigado! Seu agendamento foi registrado. Entraremos em contato em breve para confirmar.');
-            }, 2000);
+                window.location.href = 'payment.html';
+            }, 1000);
         });
 
         // SET MIN DATE FOR BOOKING
